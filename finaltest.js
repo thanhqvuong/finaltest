@@ -26,6 +26,7 @@ function spinImages() {
         for (let img of resultImages) {
             const randomIndex = Math.floor(Math.random() * images.length);
             img.src = images[randomIndex].src;
+            console.log(`Đang thay đổi hình ảnh: ${images[randomIndex].src}`); // Kiểm tra log
         }
 
         spinCount++;
@@ -112,6 +113,7 @@ function resetBets() {
 spinButton.addEventListener('click', () => {
     if (!isSpinning) {
         isSpinning = true; // Đánh dấu là đang quay
+        console.log("Bắt đầu quay!");
         spinImages();
 
         // Xóa thông báo trước đó khi bắt đầu quay mới
