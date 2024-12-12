@@ -15,21 +15,20 @@ body {
     border-radius: 10px;
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
     max-width: 600px;
-    margin: 10px; /* Added margin to allow space for smaller screens */
+    width: 100%;
 }
 
 .result-row {
     display: flex;
-    justify-content: center; /* Center the images */
+    justify-content: center;
     margin-bottom: 10px;
 }
 
 .result-row img {
     width: 80px;
     height: 80px;
-    margin-right: 0; /* Remove margin between images */
+    margin-right: 0;
 }
 
 .spin-container {
@@ -57,12 +56,11 @@ body {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-    width: 100%; /* Ensure it spans the full width */
 }
 
 .bet-row .bet-item {
     text-align: center;
-    width: 15%; /* Percentage to maintain flexible sizing */
+    width: 80px;
 }
 
 .bet-row img {
@@ -79,9 +77,6 @@ body {
     cursor: pointer;
     background-color: #28a745;
     color: white;
-    width: 100%;
-    max-width: 200px;
-    margin-top: 10px;
 }
 
 .reset-button:hover {
@@ -96,9 +91,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-/* Media Queries for Responsive Design */
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
     .game-container {
         padding: 15px;
     }
@@ -108,27 +101,22 @@ body {
         height: 60px;
     }
 
-    .spin-button, .reset-button {
+    .spin-button {
         padding: 8px 16px;
         font-size: 14px;
     }
 
-    .bet-row {
-        flex-direction: column;
-        align-items: center;
-    }
-
     .bet-row .bet-item {
-        width: 80%; /* Full width on smaller screens */
-        margin-bottom: 10px;
+        width: 30%;
     }
 
-    .note {
-        font-size: 12px;
+    .reset-button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }
 
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
     .game-container {
         padding: 10px;
     }
@@ -138,16 +126,25 @@ body {
         height: 50px;
     }
 
-    .spin-button, .reset-button {
+    .spin-button {
         padding: 6px 12px;
         font-size: 12px;
     }
 
     .bet-row .bet-item {
-        width: 100%; /* Full width on extra small screens */
+        width: 45%;
+    }
+
+    .reset-button {
+        padding: 6px 12px;
+        font-size: 12px;
     }
 
     .note {
-        font-size: 10px;
+        font-size: 12px;
+    }
+
+    #result-message {
+        font-size: 14px;
     }
 }

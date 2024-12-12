@@ -42,33 +42,42 @@ function spinImages() {
 function displayFinalResult() {
     // Lấy kết quả cuối cùng từ các hình ảnh
     const finalResults = Array.from(resultImages).map(img => {
-        const result = images.find(image => image.src === img.src);
+        const imgName = img.src.split('/').pop(); // Chỉ lấy tên file
+        const result = images.find(image => image.src.split('/').pop() === imgName);
         return result ? result.type : null;
     }).filter(result => result !== null); // Lọc kết quả null
 
-    const betTypes = Object.keys(bettingPoints).filter(type => bettingPoints[type] > 0);
-
-    // Kiểm tra xem người chơi có đoán đúng không
-    const correctBets = betTypes.filter(type => finalResults.includes(type));
-
-    // Hiển thị thông báo kết quả
-    if (correctBets.length > 0) {
-        resultMessage.innerHTML = `Bạn đã đoán đúng (${correctBets.join(', ')})! Kết quả: ${finalResults.join(', ')}`;
-    } else {
-        resultMessage.innerHTML = `Bạn đã đoán sai! Kết quả: ${finalResults.join(', ')}`;
+    // Kiểm tra nếu có kết quả hợp lệ
+    if (finalResults.length === 0) {
+        console.log("Không có kết quả hợp lệ!");
+        return;
     }
 
-    // Cập nhật điểm cược hiển thị cho từng loại
+    // Lấy các loại cược và kiểm tra kết quả của người chơi
+    const betTypes = Object.keys(bettingPoints).filter(type => bettingPoints[type] > 0);
+    const correctBets = [];
     betTypes.forEach(type => {
-        const betItem = document.querySelector(`.bet-item[data-type="${type}"]`);
-        if (betItem) {
-            betItem.querySelector('div').innerText = bettingPoints[type];
+        if (finalResults.includes(type)) {
+            correctBets.push(type);
         }
     });
 
-    // Reset điểm cược sau mỗi lượt chơi
-    resetBets();
+    // Đếm số lần xuất hiện của mỗi loại hình trong kết quả
+    const resultCounts = finalResults.reduce((acc, result) => {
+        acc[result] = (acc[result] || 0) + 1;
+        return acc;
+    }, {});
 
+    // Tạo thông báo kết quả
+    let resultText = "Bạn đã đoán sai (";
+    const betText = betTypes.map(type => `${type} ${bettingPoints[type]}`).join(', ');
+    resultText += betText + ') Kết quả là (';
+
+    const resultList = Object.keys(resultCounts).map(type => `${type} ${resultCounts[type]}`);
+    resultText += resultList.join(", ") + ")";
+
+    console.log(resultText); // Hiển thị kết quả trong console
+    resultMessage.innerHTML = resultText; // Hiển thị kết quả lên giao diện
     isSpinning = false; // Kết thúc quá trình quay
 }
 
