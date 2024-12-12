@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f9f9f9;
+}
+
+.game-container {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+.result-row {
+    display: flex;
+    justify-content: center; /* Center the images */
+    margin-bottom: 10px;
+}
+
+.result-row img {
+    width: 80px;
+    height: 80px;
+    margin-right: 0; /* Remove margin between images */
+}
+
+
+.spin-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%; /* Ensure it spans the full width */
+    margin-bottom: 10px;
+}
+
+.spin-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+}
+
+.spin-button:hover {
+    opacity: 0.9;
+}
+
+.bet-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.bet-row .bet-item {
+    text-align: center;
+    width: 80px;
+}
+
+.bet-row img {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+}
+
+.reset-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+}
+
+.reset-button:hover {
+    opacity: 0.9;
+}
+
+.note {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
