@@ -1,11 +1,11 @@
 // Danh sách hình ảnh cho trò chơi
 const images = [
-    { src: '/imgfinaltest/bau.png', type: 'bau' },
-    { src: '/imgfinaltest/cua.png', type: 'cua' },
-    { src: '/imgfinaltest/tom.png', type: 'tom' },
-    { src: '/imgfinaltest/ca.png', type: 'ca' },
-    { src: '/imgfinaltest/huou.png', type: 'huou' },
-    { src: '/imgfinaltest/ga.png', type: 'ga' }
+    { src: './bau.png', type: 'bau' },
+    { src: './cua.png', type: 'cua' },
+    { src: './tom.png', type: 'tom' },
+    { src: './ca.png', type: 'ca' },
+    { src: './huou.png', type: 'huou' },
+    { src: './ga.png', type: 'ga' }
 ];
 
 // Các biến toàn cục
