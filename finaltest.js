@@ -1,25 +1,13 @@
-// Danh sách hình ảnh cho trò chơi
 const images = [
-    { src: './bau.png', type: 'bau' },
-    { src: './cua.png', type: 'cua' },
-    { src: './tom.png', type: 'tom' },
-    { src: './ca.png', type: 'ca' },
-    { src: './huou.png', type: 'huou' },
-    { src: './ga.png', type: 'ga' }
+    { src: 'img/bau.png', type: 'bau' },
+    { src: 'img/cua.png', type: 'cua' },
+    { src: 'img/tom.png', type: 'tom' },
+    { src: 'img/ca.png', type: 'ca' },
+    { src: 'img/huou.png', type: 'huou' },
+    { src: 'img/ga.png', type: 'ga' }
 ];
 
-// Các biến toàn cục
-let bettingPoints = { bau: 0, cua: 0, tom: 0, ca: 0, huou: 0, ga: 0 };
-let isSpinning = false;
-
-// Lấy các phần tử DOM
-const resultImages = document.querySelectorAll('.result-img');
-const spinButton = document.querySelector('.spin-button');
-const resetButton = document.querySelector('.reset-button');
-const betItems = document.querySelectorAll('.bet-item');
-const resultMessage = document.getElementById('result-message');
-
-// Hàm quay hình ảnh
+// Quay và hiển thị kết quả
 function spinImages() {
     let spinCount = 0;
     const spinInterval = setInterval(() => {
@@ -30,7 +18,6 @@ function spinImages() {
 
         spinCount++;
 
-        // Sau khi quay đủ số lần, dừng lại
         if (spinCount >= 100) {
             clearInterval(spinInterval);
             displayFinalResult();
@@ -42,25 +29,18 @@ function spinImages() {
 function displayFinalResult() {
     // Lấy kết quả cuối cùng từ các hình ảnh
     const finalResults = Array.from(resultImages).map(img => {
-        const imgName = img.src.split('/').pop(); // Chỉ lấy tên file
-        const result = images.find(image => image.src.split('/').pop() === imgName);
+        const result = images.find(image => image.src === img.src);
         return result ? result.type : null;
-    }).filter(result => result !== null); // Lọc kết quả null
+    }).filter(result => result !== null);
 
-    // Kiểm tra nếu có kết quả hợp lệ
-    if (finalResults.length === 0) {
-        console.log("Không có kết quả hợp lệ!");
-        return;
-    }
-
-    // Lấy các loại cược và kiểm tra kết quả của người chơi
     const betTypes = Object.keys(bettingPoints).filter(type => bettingPoints[type] > 0);
+
     const correctBets = [];
-    betTypes.forEach(type => {
-        if (finalResults.includes(type)) {
-            correctBets.push(type);
+    for (let i = 0; i < betTypes.length; i++) {
+        if (finalResults.indexOf(betTypes[i]) !== -1) {
+            correctBets.push(betTypes[i]);
         }
-    });
+    }
 
     // Đếm số lần xuất hiện của mỗi loại hình trong kết quả
     const resultCounts = finalResults.reduce((acc, result) => {
@@ -69,74 +49,39 @@ function displayFinalResult() {
     }, {});
 
     // Tạo thông báo kết quả
-    let resultText = "Bạn đã đoán sai (";
-    const betText = betTypes.map(type => `${type} ${bettingPoints[type]}`).join(', ');
-    resultText += betText + ') Kết quả là (';
-
-    const resultList = Object.keys(resultCounts).map(type => `${type} ${resultCounts[type]}`);
-    resultText += resultList.join(", ") + ")";
-
-    console.log(resultText); // Hiển thị kết quả trong console
-    resultMessage.innerHTML = resultText; // Hiển thị kết quả lên giao diện
-    isSpinning = false; // Kết thúc quá trình quay
-}
-
-// Hàm xử lý đặt cược
-function placeBet(event) {
-    if (isSpinning) return; // Không cho phép đặt cược khi đang quay
-
-    const betItem = event.currentTarget;
-    const type = betItem.dataset.type;
-
-    // Kiểm tra nếu điểm cược chưa đạt tối đa là 3
-    if (bettingPoints[type] < 3) {
-        bettingPoints[type]++;
-
-        // Cập nhật số điểm cược hiển thị
-        betItem.querySelector('div').innerText = bettingPoints[type];
-
-        // Kiểm tra và thông báo nếu đạt tối đa cược
-        if (bettingPoints[type] === 3) {
-            alert(`Bạn đã đạt tối đa cược cho ${type}!`);
+    let resultText = '';
+    if (correctBets.length > 0) {
+        resultText = "Bạn đã đoán đúng (";
+        for (let i = 0; i < correctBets.length; i++) {
+            resultText += correctBets[i];
+            if (i < correctBets.length - 1) {
+                resultText += ", ";
+            }
         }
+        resultText += `)! Kết quả là (`;
     } else {
-        alert(`Bạn không thể cược thêm cho ${type} nữa! Tối đa 3 điểm.`);
+        resultText = "Bạn đã đoán sai! Kết quả là (";
     }
-}
 
-// Hàm đặt lại điểm cược
-function resetBets() {
-    Object.keys(bettingPoints).forEach(type => {
-        bettingPoints[type] = 0; // Đặt lại điểm cược về 0
+    let finalResultText = "";
+    for (let i = 0; i < finalResults.length; i++) {
+        finalResultText += `${finalResults[i]} ${resultCounts[finalResults[i]]}`;
+        if (i < finalResults.length - 1) {
+            finalResultText += ", ";
+        }
+    }
+    resultText += finalResultText + ")";
 
-        // Cập nhật nội dung hiển thị về 0
+    resultMessage.innerHTML = resultText;
+
+    betTypes.forEach(type => {
         const betItem = document.querySelector(`.bet-item[data-type="${type}"]`);
         if (betItem) {
-            betItem.querySelector('div').innerText = '0';
+            betItem.querySelector('div').innerText = bettingPoints[type];
         }
     });
+
+    resetBets();
+
+    isSpinning = false;
 }
-
-// Sự kiện cho nút Quay
-spinButton.addEventListener('click', () => {
-    if (!isSpinning) {
-        isSpinning = true; // Đánh dấu là đang quay
-        spinImages();
-
-        // Xóa thông báo trước đó khi bắt đầu quay mới
-        resultMessage.innerHTML = '';
-    }
-});
-
-// Sự kiện cho các hình ảnh đặt cược
-betItems.forEach(item => {
-    item.addEventListener('click', placeBet);
-});
-
-// Sự kiện cho nút Đặt lại
-resetButton.addEventListener('click', () => {
-    if (!isSpinning) {
-        resetBets();
-        resultMessage.innerHTML = ''; // Xóa thông báo kết quả
-    }
-});
