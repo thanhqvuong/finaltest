@@ -55,7 +55,7 @@ function displayFinalResult() {
     if (correctBets.length > 0) {
         resultMessage.innerHTML = `Bạn đã đoán đúng (${correctBets.join(', ')})! Kết quả: ${finalResults.join(', ')}`;
     } else {
-        resultMessage.innerHTML = `Bạn đã đoán sai (${betTypes.join(', ')})! Kết quả: ${finalResults.join(', ')}`;
+        resultMessage.innerHTML = `Bạn đã đoán sai! Kết quả: ${finalResults.join(', ')}`;
     }
 
     // Cập nhật điểm cược hiển thị cho từng loại
@@ -90,6 +90,8 @@ function placeBet(event) {
         if (bettingPoints[type] === 3) {
             alert(`Bạn đã đạt tối đa cược cho ${type}!`);
         }
+    } else {
+        alert(`Bạn không thể cược thêm cho ${type} nữa! Tối đa 3 điểm.`);
     }
 }
 
