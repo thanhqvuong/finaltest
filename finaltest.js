@@ -25,11 +25,17 @@ let bettingPoints = {
     ga: 0
 };
 let isSpinning = false;
+let totalBets = 0;
 
-// Spin images
+// Spin images logic
 function spinImages() {
     if (isSpinning) return; // Prevent multiple spins
     isSpinning = true;
+
+    // Disable buttons and betting during spinning
+    spinButton.disabled = true;
+    resetButton.disabled = true;
+    betItems.forEach(item => item.classList.add('disabled'));
 
     let spinCount = 0;
     const spinInterval = setInterval(() => {
@@ -39,7 +45,7 @@ function spinImages() {
         });
         spinCount++;
 
-        if (spinCount >= 50) {
+        if (spinCount >= 100) {
             clearInterval(spinInterval);
             displayFinalResult();
         }
@@ -48,29 +54,45 @@ function spinImages() {
 
 // Display final result
 function displayFinalResult() {
+    // Get the result types from images
     const finalResults = Array.from(resultImages).map(img => {
         const result = images.find(image => image.src.includes(img.src.split('/').pop()));
         return result ? result.type : null;
     }).filter(result => result !== null);
 
+    // Count occurrences of each result type
     const resultCounts = finalResults.reduce((acc, result) => {
         acc[result] = (acc[result] || 0) + 1;
         return acc;
     }, {});
 
-    let resultText = 'Kết quả: ';
-    resultText += Object.entries(resultCounts)
-        .map(([type, count]) => `${type} (${count})`)
-        .join(', ');
+    // Determine if bets were correct
+    const correctBets = Object.keys(bettingPoints).filter(type => bettingPoints[type] > 0 && resultCounts[type]);
 
+    let resultText = '';
+    if (correctBets.length > 0) {
+        resultText = `Bạn đã đoán đúng với kết quả: ${finalResults.join(', ')}`;
+    } else {
+        resultText = `Bạn đã đoán sai với kết quả: ${finalResults.join(', ')}`;
+    }
     resultMessage.textContent = resultText;
+
+    // Re-enable buttons and betting
+    spinButton.disabled = false;
+    resetButton.disabled = false;
+    betItems.forEach(item => item.classList.remove('disabled'));
+
     isSpinning = false;
 }
 
-// Place bet
+// Place a bet
 function placeBet(type) {
-    if (bettingPoints[type] !== undefined) {
+    if (isSpinning || totalBets >= 3) return; // Disable betting during spinning or if max bets reached
+
+    if (bettingPoints[type] < 3) {
         bettingPoints[type] += 1;
+        totalBets += 1;
+
         const betItem = document.querySelector(`.bet-item[data-type="${type}"] div`);
         if (betItem) {
             betItem.textContent = bettingPoints[type];
@@ -78,8 +100,10 @@ function placeBet(type) {
     }
 }
 
-// Reset bets
+// Reset all bets
 function resetBets() {
+    if (isSpinning) return; // Disable reset during spinning
+
     Object.keys(bettingPoints).forEach(type => {
         bettingPoints[type] = 0;
         const betItem = document.querySelector(`.bet-item[data-type="${type}"] div`);
@@ -87,19 +111,16 @@ function resetBets() {
             betItem.textContent = "0";
         }
     });
+    totalBets = 0;
 }
 
 // Event listeners
 if (spinButton) {
     spinButton.addEventListener('click', spinImages);
-} else {
-    console.error("Spin button not found!");
 }
 
 if (resetButton) {
     resetButton.addEventListener('click', resetBets);
-} else {
-    console.error("Reset button not found!");
 }
 
 betItems.forEach(item => {
@@ -108,4 +129,3 @@ betItems.forEach(item => {
         placeBet(type);
     });
 });
-
