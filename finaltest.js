@@ -1,4 +1,4 @@
-// Đường dẫn ảnh
+// Dữ liệu hình ảnh
 const images = [
     { src: '/finaltest/img/bau.png', type: 'bau' },
     { src: '/finaltest/img/cua.png', type: 'cua' },
@@ -8,14 +8,14 @@ const images = [
     { src: '/finaltest/img/ga.png', type: 'ga' }
 ];
 
-// Lấy các phần tử DOM
+// DOM elements
 const resultImages = document.querySelectorAll('.result-img');
 const spinButton = document.querySelector('.spin-button');
+const resetButton = document.querySelector('.reset-button');
 const resultMessage = document.getElementById('result-message');
 const betItems = document.querySelectorAll('.bet-item');
-const resetButton = document.querySelector('.reset-button');
 
-// Biến lưu trạng thái và dữ liệu
+// Variables
 let bettingPoints = {
     bau: 0,
     cua: 0,
@@ -26,18 +26,17 @@ let bettingPoints = {
 };
 let isSpinning = false;
 
-// Hàm quay
+// Spin images
 function spinImages() {
-    if (isSpinning) return; // Ngăn quay liên tục
+    if (isSpinning) return; // Prevent multiple spins
     isSpinning = true;
 
     let spinCount = 0;
     const spinInterval = setInterval(() => {
-        for (let img of resultImages) {
+        resultImages.forEach(img => {
             const randomIndex = Math.floor(Math.random() * images.length);
             img.src = images[randomIndex].src;
-        }
-
+        });
         spinCount++;
 
         if (spinCount >= 50) {
@@ -47,10 +46,10 @@ function spinImages() {
     }, 50);
 }
 
-// Hàm hiển thị kết quả
+// Display final result
 function displayFinalResult() {
     const finalResults = Array.from(resultImages).map(img => {
-        const result = images.find(image => image.src === img.src);
+        const result = images.find(image => image.src.includes(img.src.split('/').pop()));
         return result ? result.type : null;
     }).filter(result => result !== null);
 
@@ -68,7 +67,7 @@ function displayFinalResult() {
     isSpinning = false;
 }
 
-// Hàm đặt cược
+// Place bet
 function placeBet(type) {
     if (bettingPoints[type] !== undefined) {
         bettingPoints[type] += 1;
@@ -79,7 +78,7 @@ function placeBet(type) {
     }
 }
 
-// Hàm reset cược
+// Reset bets
 function resetBets() {
     Object.keys(bettingPoints).forEach(type => {
         bettingPoints[type] = 0;
@@ -90,9 +89,18 @@ function resetBets() {
     });
 }
 
-// Gắn sự kiện
-spinButton.addEventListener('click', spinImages);
-resetButton.addEventListener('click', resetBets);
+// Event listeners
+if (spinButton) {
+    spinButton.addEventListener('click', spinImages);
+} else {
+    console.error("Spin button not found!");
+}
+
+if (resetButton) {
+    resetButton.addEventListener('click', resetBets);
+} else {
+    console.error("Reset button not found!");
+}
 
 betItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -100,3 +108,4 @@ betItems.forEach(item => {
         placeBet(type);
     });
 });
+
