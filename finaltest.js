@@ -27,12 +27,12 @@ let bettingPoints = {
 let isSpinning = false;
 let totalBets = 0;
 
-// Spin images logic
+// Quay hình ảnh
 function spinImages() {
-    if (isSpinning) return; // Prevent multiple spins
+    if (isSpinning) return; // Ngăn người dùng kích hoạt lại
     isSpinning = true;
 
-    // Disable buttons and betting during spinning
+    // Disable các nút khi đang quay
     spinButton.disabled = true;
     resetButton.disabled = true;
     betItems.forEach(item => item.classList.add('disabled'));
@@ -52,32 +52,38 @@ function spinImages() {
     }, 50);
 }
 
-// Display final result
+// Hiển thị kết quả cuối cùng
 function displayFinalResult() {
-    // Get the result types from images
+    // Lấy danh sách kết quả cuối
     const finalResults = Array.from(resultImages).map(img => {
-        const result = images.find(image => image.src.includes(img.src.split('/').pop()));
+        const result = images.find(image => img.src.includes(image.src.split('/').pop()));
         return result ? result.type : null;
     }).filter(result => result !== null);
 
-    // Count occurrences of each result type
+    // Đếm số lần xuất hiện của từng loại trong kết quả
     const resultCounts = finalResults.reduce((acc, result) => {
         acc[result] = (acc[result] || 0) + 1;
         return acc;
     }, {});
 
-    // Determine if bets were correct
-    const correctBets = Object.keys(bettingPoints).filter(type => bettingPoints[type] > 0 && resultCounts[type]);
+    // So sánh với cược của người chơi
+    let correctBets = 0;
+    Object.keys(bettingPoints).forEach(type => {
+        if (bettingPoints[type] > 0 && resultCounts[type]) {
+            correctBets += Math.min(bettingPoints[type], resultCounts[type]);
+        }
+    });
 
     let resultText = '';
-    if (correctBets.length > 0) {
-        resultText = `Bạn đã đoán đúng với kết quả: ${finalResults.join(', ')}`;
+    if (correctBets > 0) {
+        resultText = `Bạn đã đoán đúng với kết quả: ${formatFinalResults(finalResults)}`;
     } else {
-        resultText = `Bạn đã đoán sai với kết quả: ${finalResults.join(', ')}`;
+        resultText = `Bạn đã đoán sai với kết quả: ${formatFinalResults(finalResults)}`;
     }
+
     resultMessage.textContent = resultText;
 
-    // Re-enable buttons and betting
+    // Enable các nút sau khi quay xong
     spinButton.disabled = false;
     resetButton.disabled = false;
     betItems.forEach(item => item.classList.remove('disabled'));
@@ -85,9 +91,19 @@ function displayFinalResult() {
     isSpinning = false;
 }
 
-// Place a bet
+// Định dạng chuỗi kết quả
+function formatFinalResults(results) {
+    const counts = results.reduce((acc, type) => {
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+    }, {});
+
+    return Object.entries(counts).map(([type, count]) => `${type} ${count}`).join(', ');
+}
+
+// Đặt cược
 function placeBet(type) {
-    if (isSpinning || totalBets >= 3) return; // Disable betting during spinning or if max bets reached
+    if (isSpinning || totalBets >= 3) return; // Ngăn đặt cược khi đang quay hoặc vượt giới hạn cược
 
     if (bettingPoints[type] < 3) {
         bettingPoints[type] += 1;
@@ -100,9 +116,9 @@ function placeBet(type) {
     }
 }
 
-// Reset all bets
+// Đặt lại cược
 function resetBets() {
-    if (isSpinning) return; // Disable reset during spinning
+    if (isSpinning) return; // Ngăn đặt lại khi đang quay
 
     Object.keys(bettingPoints).forEach(type => {
         bettingPoints[type] = 0;
